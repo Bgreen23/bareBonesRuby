@@ -15,12 +15,10 @@ db = SQLite3::Database.new "./db/dev.db"
 Cuba.define do
   on root do
     student_array = db.execute("SELECT * FROM students")
-    p "student_array", student_array
     students = student_array.map do |id, name, email, discord|
-       p "student", id, name, email, discord
-      { :id => id, :name => name, :email => email, :discord => discord }
-      p "students", students
+       { :id => id, :name => name, :email => email, :discord => discord }
     end
+    p "students", students
     res.write view("index", students: students)
   end
 
