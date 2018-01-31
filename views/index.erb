@@ -5,11 +5,11 @@
       <%= animes[:name] %>
       <%= animes[:creator] %>
       <%= animes[:mainChar] %>
-
+      <a href="/edit<% animes[:id] %>">Edit</a>
       <form action="/delete/<%= animes[:id] %>" method="post" class="delete">
         <input type="submit" value="delete">
       </form>
     </li>
   <% end %>
 </ul>
-<p><a href="/new">Add new</a></p>
+<p><a href="/new">Add New Anime!</a></p>

@@ -25,6 +25,13 @@ Cuba.define do
   on "new" do
     res.write view("new")
   end
+on "edit/:id" do |id|
+  anime = db.execute(
+    "SELECT * FROM animes WHERE id=?", id
+  ).first
+  anime = {id: anime[0], name: anime[1], creator: anime[2], mainChar: anime[3] }
+  res.write view("edit", anime: anime)
+end
 
   on post do
     on "create" do
