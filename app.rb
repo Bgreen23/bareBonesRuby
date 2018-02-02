@@ -3,7 +3,7 @@ require "cuba/safe"
 require "cuba/render"
 require "erb"
 require "sqlite3"
-
+require "ostruct"
 
 Cuba.use Rack::Session::Cookie, :secret => ENV["SESSION_SECRET"] || "__a_very_long_string__"
 
@@ -16,7 +16,13 @@ Cuba.define do
   on root do
     anime_array = db.execute("SELECT * FROM animes")
     animes = anime_array.map do |id, name, creator, mainChar|
-       { :id => id, :name => name, :creator => creator, :mainChar => mainChar }
+      OpenStruct.new(
+       { :id => id,
+         :name => name,
+         :creator => creator,
+         :mainChar => mainChar
+       }
+     )
     end
     p "animes", animes
     res.write view("index", animes: animes)
@@ -25,16 +31,28 @@ Cuba.define do
   on "new" do
     res.write view("new")
   end
-on "edit/:id" do |id|
+on get, "edit/:id" do |id|
   anime = db.execute(
     "SELECT * FROM animes WHERE id=?", id
   ).first
-  anime = {id: anime[0], name: anime[1], creator: anime[2], mainChar: anime[3] }
+  pp 'anime as array', anime
+  anime = OpenStruct.new(id: anime[0], name: anime[1], creator: anime[2], mainChar: anime[3] )
   res.write view("edit", anime: anime)
+  pp 'anime as OpenStruct', anime
 end
 
-  on post do
-    on "create" do
+on post, "update/:id" do |id|
+  db.execute(
+    "UPDATE anime SET (name, creator, mainChar)=(?, ?, ?) WHERE id=?",
+    req.params['name'],
+    req.params['creator'],
+    req.params['mainChar'],
+    id,
+  )
+  res.redirect "/"
+end
+
+  on post, "create" do
       name = req.params["name"]
       creator = req.params["creator"]
       mainChar = req.params["mainChar"]
@@ -59,4 +77,3 @@ end
 
     res.write view("404")
   end
-end
