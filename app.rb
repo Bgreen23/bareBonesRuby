@@ -3,29 +3,19 @@ require "cuba/safe"
 require "cuba/render"
 require "erb"
 require "sqlite3"
-require "ostruct"
+require_relative "./models/anime"
 
 Cuba.use Rack::Session::Cookie, :secret => ENV["SESSION_SECRET"] || "__a_very_long_string__"
 
 Cuba.plugin Cuba::Safe
 Cuba.plugin Cuba::Render
 
-db = SQLite3::Database.new "./db/dev.db"
+
 
 Cuba.define do
   on root do
-    anime_array = db.execute("SELECT * FROM animes")
-    animes = anime_array.map do |id, name, creator, mainChar|
-      OpenStruct.new(
-       { :id => id,
-         :name => name,
-         :creator => creator,
-         :mainChar => mainChar
-       }
-     )
-    end
-    p "animes", animes
-    res.write view("index", animes: animes)
+    anime = anime.all
+    res.write view("index", animes: anime.all)
   end
 
   on "new" do

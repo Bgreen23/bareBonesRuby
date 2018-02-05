@@ -5,8 +5,8 @@
       <%= animes[:name] %>
       <%= animes[:creator] %>
       <%= animes[:mainChar] %>
-      <a href="/edit<% animes[:id] %>">Edit</a>
-      <form action="/delete/<%= animes[:id] %>" method="post" class="delete">
+      <a href="/edit<% animes.id %>">Edit</a>
+      <form action="/delete/<%= animes.id %>" method="post" class="delete">
         <input type="submit" value="delete">
       </form>
     </li>
